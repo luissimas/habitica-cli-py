@@ -11,3 +11,5 @@ In order to use the application you have to create a file called `config.py` int
 apiKey=<your-api-key>
 userId=<your-user-id>
 ```
+
+Those informations can be found [here](https://habitica.com/user/settings/api)

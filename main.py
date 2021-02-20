@@ -7,20 +7,36 @@ import api
 
 
 def listTasks(tasksArray, showIndex):
+    tasksArray.sort(key=lambda task: task['type'])
+
+    print('\n------ Daily ------')
     if showIndex:
         for task in tasksArray:
-            print(f'[{tasksArray.index(task)}]', re.sub(r'\#.', '', task['text']), '-', task['type'])
+            if tasksArray.index(task) >= 1:
+                if tasksArray[tasksArray.index(task)]['type'] == 'habit' and tasksArray[tasksArray.index(task) - 1]['type'] != 'habit':
+                    print('-------------------')
+                    print('\n------ Habit ------')
+                elif (tasksArray[tasksArray.index(task)]['type'] == 'todo' and tasksArray[tasksArray.index(task) - 1]['type'] != 'todo'):
+                    print('-------------------')
+                    print('\n------ Todo ------')
+
+            print(f'[{tasksArray.index(task)}] ' + re.sub(r'\#.', '', task['text']) + '\n' + task['notes'])
 
             if (task['type'] != 'habit') and (len(task['checklist'])):
                 for item in task['checklist']:
                     print('     ', f'[{tasksArray.index(task)}.{task["checklist"].index(item)}]', '[X]' if item['completed'] else '[ ]', item['text'])
+        print('-------------------')
     else:
         for task in tasksArray:
-            print(re.sub(r'\#.', '', task['text']), '-', task['type'])
+            if tasksArray.index(task) >= 1:
+                if tasksArray[tasksArray.index(task)]['type'] == 'habit' and tasksArray[tasksArray.index(task) - 1]['type'] == 'daily':
+                    print('\n------ Habit ------')
+                elif tasksArray[tasksArray.index(task)]['type'] == 'todo' and tasksArray[tasksArray.index(task) - 1]['type'] == 'habit':
+                    print('\n------ Todo ------')
 
-            if (task['type'] != 'habit') and (len(task['checklist'])):
-                for item in task['checklist']:
-                    print('     ', '[X]' if item['completed'] else '[ ]', item['text'])
+            print(f'[{tasksArray.index(task)}] ' + re.sub(r'\#.', '', task['text']) + '\n' + task['notes'])
+
+        print('-------------------')
 
     return tasksArray
 
@@ -28,11 +44,11 @@ def listTasks(tasksArray, showIndex):
 
 arg = argparse.ArgumentParser(description='A CLI interface for Habitica')
 
-arg.add_argument('--test', action='store_true', help='Test the state of the API')
-arg.add_argument('--list', action='store_true', help='List all the tasks')
-arg.add_argument('--delete', action='store_true', help='Delete a task')
-arg.add_argument('--newtask', action='store_true', help='Add a new task')
-arg.add_argument('--check', action='store_true', help='Check a task')
+arg.add_argument('--test', '-t', action='store_true', help='Test the state of the API')
+arg.add_argument('--list', '-l', action='store_true', help='List all the tasks')
+arg.add_argument('--delete', '-d', action='store_true', help='Delete a task')
+arg.add_argument('--newtask', '-nt', action='store_true', help='Add a new task')
+arg.add_argument('--check', '-ck', action='store_true', help='Check a task')
 
 parser = arg.parse_args()
 
